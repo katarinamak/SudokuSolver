@@ -20,9 +20,10 @@ def solve_sudoku(grid):
     # for i in possibilities:
     #     print(i, possibilities[i])
 
-    fill_in(grid, possibilities)
+    while len(possibilities) > 0:
+        fill_in(grid, possibilities)
+        
     return grid
-
 
 def find_possibilities(grid, square, possibilities):
     row, col = square
@@ -44,6 +45,7 @@ def find_possibilities(grid, square, possibilities):
                 s.remove(grid[3*x + offset_x][3*y + offset_y])
     
     possibilities[(row, col)] = s
+    return possibilities
 
 def fill_in(grid, possibilities):
     if len(possibilities) == 0:
@@ -51,13 +53,22 @@ def fill_in(grid, possibilities):
     
     # sort possibilities by increasing number of possibilities
     # if there is 
+    remove = []
     for p in possibilities:
         # if there is only one possible value, update the entry with that value
         if len(possibilities[p]) == 1: 
             grid[p[0]][p[1]] = next(iter(possibilities[p]))
-            del possibilities[p]
-            # print(f"{p[0]}, {p[1]}, {grid[p[0]][p[1]]}")
+            print(p)
+            remove.append(p)
 
+    for k in remove: 
+        del possibilities[k]
+
+    for i in possibilities:
+        find_possibilities(grid, i, possibilities)
+        print(i, possibilities[i])
+    
+    return grid
 
 def print_grid(grid):
     for row in grid:
@@ -67,6 +78,7 @@ def print_grid(grid):
 def solve_puzzles():
     puzzles = parse_puzzles()
     solved = solve_sudoku(puzzles[0])
+    print_grid(solved)
     # for i, puzzle in enumerate(puzzles):
     #     print("Puzzle #{}".format(i+1))
     #     print("Before:")
